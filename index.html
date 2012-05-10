@@ -1,0 +1,407 @@
+<html>
+	<head>
+		<title>Project Khalio</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="icon" type="image/png" href="favicon.ico" />
+
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="color-min.js"></script>
+		<script type="text/javascript" src="engine.js"></script>
+		<script type="text/javascript" src="levels.js"></script>
+		<script type="text/javascript" src="Khalio.js"></script>
+		<script type="text/javascript" src="input.js"></script>
+		<script src="http://bljak.org:1236/socket.io/socket.io.js"></script>
+		
+		<script type="text/javascript">
+			OSI = setInterval; //Wrapper for setInterval
+			OCI = clearInterval; //Wrapper for clearInterval
+			IC = 0; //Interval counter
+			
+			setInterval = function (func, delay)
+			{
+				if(func && delay)
+					IC++;
+				
+				return OSI(func, delay);
+			};
+
+			clearInterval = function (id)
+			{
+				if(id !== true) //JQuery sometimes hands in true which doesn't count
+					IC--;
+
+				return OCI(id);
+			};
+		
+			var game = false;
+			ni = false;
+			
+			var LU = function(id, t, pi)
+			{
+				$("#" + id).animate({"borderColor":"#8E3900", "padding": pi+"px"}, t);
+			}
+			
+			var LD = function(id, t)
+			{
+				$("#" + id).animate({"borderColor":"#111", "padding":"0px"}, t);
+			}
+			
+			var AU = function(ut, nt, pi) //all up
+			{
+				LU("f", ut, pi);
+				setTimeout(function(){LU("t", ut, pi)}, nt);
+				setTimeout(function(){LU("g", ut, pi)}, nt*2);
+			}
+			
+			var AD = function(dt, nt) //all down
+			{
+				LD("f", dt);
+				setTimeout(function(){LD("t", dt)}, nt);
+				setTimeout(function(){LD("g", dt)}, nt*2);
+			}
+			
+			var shine = function(ut, nt, st, pi) //up time (how long does it take for an element to light up), next time (how long before we switch to the next one), switch time (how long before they start shutting down)
+			{				
+				AU(ut, nt, pi);
+				setTimeout(function(){AD(ut, nt)}, st)
+			}
+			
+			
+			var init = function()
+			{				
+				var canvas = document.getElementById("c");
+				var container = document.getElementById("cont");
+				
+				fps = 60;
+				
+				if (getCookie("perks"))
+					var perks = getCookie("perks").split(":");
+				else
+					var perks = [];
+				
+				if (perks != [])
+					for (var i = 0; i < perks.length; i ++)
+						perks[i] = parseInt(perks[i]);
+				
+				game = new Game(canvas, perks);
+				
+				game.FFPS = fps; //Forced FPS
+
+				
+				
+				
+				try
+				{
+					socket = io.connect('http://bljak.org:1236');
+
+					socket.on("gotit", function(data)
+					{
+						document.getElementById("feed").value = "The server got it!";
+						game.feeded = true;
+					});
+				}
+				catch (e)
+				{
+					console.log(e);
+				}
+				
+				send = function(n, what)
+				{
+					try
+					{
+						socket.emit(n, what);
+					}
+					catch (e)
+					{
+						console.log(e);
+					}
+				}
+
+				var bla = new Date().getTime();
+				
+				sload(function()
+				{
+					game.LLSA = setInterval(function()
+					{
+						game.LSA -= 1/(1000/game.FFPS);
+					}, game.FFPS); //Lower loading screen alpha
+					
+					setTimeout(function()
+					{
+						clearInterval(game.LLSA);					
+						clearInterval(game.loading);
+					}, 1000);
+					
+					game.run = setInterval(game.update, 1000/game.FFPS);					
+					
+					game.focus = function(e)
+					{
+						game.draw();
+					};
+					
+					window.addEventListener('focus', game.focus);
+					
+					game.blur = function(e)
+					{
+						if (!game.paused)
+						{
+							game.pause();
+							p.setAttribute("class", "clicked");
+							
+							for (var i = 0; i < game.sensors.length; i ++)
+								clearTimeout(game.sensors[i].sd);
+						}
+					};
+
+					window.addEventListener('blur', game.blur); 					
+
+					game.start = new Date().getTime();
+					send("start", {"at": game.start, "date": new Date(), "time": new Date().getHours() + ":" + new Date().getMinutes()});
+										
+					window.onbeforeunload = function()
+					{
+						send("end", {"at": new Date().getTime()});
+					};
+				});			
+				
+				sendFeed = function()
+				{
+					if (game.feeded == undefined)
+						send("feed", {"feed": document.getElementById("feed").value});					
+				}
+				
+				
+				game.LSA = 1; //loading screen alpha
+ 
+				game.loading = setInterval(function()
+				{
+					game.context.save();
+					
+					game.context.globalAlpha = game.LSA;
+					game.context.fillStyle = "#111";
+					game.context.fillRect(0, 0, canvas.width, canvas.height);
+				
+					game.context.font="24pt Helvetica";
+					game.context.fillStyle = "#CCC";
+					game.context.fillText("Loading...", 40, 40);		
+
+					game.context.fillStyle = "#EEE";
+					game.context.fillRect(60, 60, 400, 10);
+					game.context.fillStyle = "#111";
+					game.context.fillRect(61, 61, 398, 8);
+					
+					w = 396 * (nl/np);
+					game.context.fillStyle = "#EEE";
+					game.context.fillRect(62, 62, w, 6);
+					
+					game.context.restore();
+				}, 1000/game.FFPS);
+			}
+			
+			var pause = function()
+			{
+				if (game.player.alive)
+				{
+					var p = document.getElementById("p");
+
+					if (!game.paused)
+					{
+						game.pause(true);
+						p.setAttribute("class", "clicked");
+					}
+					else
+					{
+						game.unpause(true);
+						p.setAttribute("class", "topMenu");
+					}
+				}
+			}
+			
+			var noinput = function()
+			{
+				ni = true;
+			}
+
+			var doinput = function()
+			{
+				ni = false;
+			}
+
+			var fff = function(i)
+			{
+				game.loadLevel(game.levels[levelCodes[i].l]);
+				game.unpause(); 
+			}
+			
+			var ll = function()
+			{
+				var toLoad = document.getElementById("lc").value;
+			
+				for (var itt = 0; itt < levelCodes.length; itt++)
+					if (levelCodes[itt].code == toLoad)
+					{
+						game.pause();
+						(function(i)
+						{
+							setTimeout(function(){fff(i);}, 1000);
+						})(itt);
+					}
+						
+				document.getElementById("lc").value = "";
+			}
+			
+			var perks = function()
+			{
+				if (!game.perks && !game.paused)
+				{
+					game.perks = true;
+				}
+				else
+				{
+					game.perks = false;		
+				}
+			}
+			
+			var reload = function()
+			{
+				if (game.player.alive)
+				{
+					clearInterval(game.level.preping);
+					game.level.score = 0;
+					game.level.gp = [];
+					game.pause(false);
+					
+					setTimeout(function()
+					{				
+						game.unpause(false);
+						game.loadLevel(game.levels[game.level.id[0]][game.level.id[1]]);
+					}, game.pauseL);
+				}
+			}
+			
+			var reset = function()
+			{
+				if (game.reset)
+				{					
+					if (game.player.alive)
+					{
+						//game.reset = false;
+						//document.getElementById("res").setAttribute("class", "topMenu");
+						//document.getElementById("res").innerHTML = "New game";
+
+						clearC();
+
+						game.messages = [];
+						game.level = undefined;
+						game.pause(false);
+						
+						setTimeout(function()
+						{
+							game.unpause();
+							game.loadLevel(game.levels[0][0]);
+						}, game.pauseL);				
+					}
+				}
+				else
+				{
+					document.getElementById("res").innerHTML = "Sure?";
+					document.getElementById("res").setAttribute("class", "clicked");
+					game.reset = true;
+				}
+			}
+			
+			var beta = function()
+			{
+				$("#b").replaceWith("<div id='b' onmouseover='beta();' onmouseout='beta2();'>- beta just like you</div>");
+			}
+			
+			var beta2 = function()
+			{
+				$("#b").replaceWith("<div id='b' onmouseover='beta();' onmouseout='beta2();'>- beta</div>");
+			}
+		</script>
+		
+		<script type="text/javascript">
+		  (function() {
+			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+			po.src = 'https://apis.google.com/js/plusone.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+		  })();
+		</script>
+	
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>									
+	</head>
+	
+	<body onload="init();">
+		<table id="cont" align="center" border="0" width="750" height="500">
+			<tr>
+				<td>
+					<table align="left" border="0">
+						<tr>
+							
+							<td>
+								<div><table>
+									<tr>
+										<td class="social" id="f">
+											<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fkhalio.banehq.com%2F&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=177127339057410" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
+										</td>
+										
+										<td class="social" id="t">
+											<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://khalio.banehq.com" data-text="A 2D portal clone!" data-via="Yannbane" data-hashtags="gaming">Tweet</a>
+											<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>										
+										</td>
+										
+										<td class="social" id="g">
+											<g:plusone></g:plusone>
+										</td>
+									</tr>
+								</table></div>
+							</td>
+							
+							<td class="h" align="center">
+								<strong>Project Khalio</strong>
+							</td>
+							
+							<td>
+								<a href="http://banehq.com" target="_blank" class="madeby">made by Yannbane</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<div align="center" id="cd"><canvas id="c" width="756" height="504"></canvas></div>
+				</td>
+			</tr>
+			
+			<tr id="o">
+				<td>
+					<table align="left" border="0">
+						<tr>
+							<td>
+								<a id="p" class="topMenu" href="javascript:void(0);" onclick="pause();">Pause</a>
+							</td>
+							<!--<td>
+								<a href="javascript:void(0);" class="topMenu" id="perks" onclick="perks();">Perks</a>
+							</td>-->
+							<td>
+								<a href="javascript:void(0);" class="topMenu" id="rel" onclick="reload();">Restart level</a>
+							</td>
+							<td>
+								<a href="javascript:void(0);" class="topMenu" id="res" onclick="reset();">New game</a>
+							</td>
+							
+							<td>  </td>
+							
+							<td class="info"><div><b>Current level:</b> <span id="ln"></span><div></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		
+	</body>
+	
+<html>

@@ -1,0 +1,198 @@
+<html>
+	<head>
+		<title>Project Khalio</title>
+		<link rel="stylesheet" type="text/css" href="../style.css" />
+		<link rel="icon" type="image/png" href="../favicon.ico" />
+
+		<script type="text/javascript" src="../jquery.js"></script>
+		<script type="text/javascript" src="../engine.js"></script>
+		<script type="text/javascript" src="../levels.js"></script>
+		<script type="text/javascript" src="LC.js"></script>
+		
+		<script type="text/javascript">			
+			var game = false;
+			ni = false;
+			cc = false;
+
+			var start = function()
+			{
+				var n = document.getElementById("name").value;
+				var pl = document.getElementById("pl").value;
+				var bg = document.getElementById("bg").value;
+				var mes = document.getElementById("mes").value;
+
+
+				if (n == "")
+					n = "Name";
+				
+				var c = document.getElementById("color").value;
+				var d = document.getElementById("cd");
+
+				d.innerHTML = '<canvas id="c" width="756" height="504"></canvas>';
+				canvas = document.getElementById("c");
+			
+				fps = 60;
+				game = new k(canvas, canvas.width, canvas.height, n, c, bg, mes);	
+				
+				setInterval(game.update, 1000/fps);		
+
+				document.getElementById("done").innerHTML = '<a href="javascript:void(0);" class="topMenu" onclick="game.finish();">Done</a>';
+				
+				if (pl != "")
+					game.load(pl);
+			}
+			
+			var init = function()
+			{
+				wt = 12;
+				
+				container = document.getElementById("cont");
+								
+				w = 756;
+				h = 504;
+				
+				container.height = h; 
+				container.width = w; 
+
+				can = document.getElementById("c");
+				cc = can.getContext("2d");
+
+				cc.width = can.width;
+				cc.height = can.height;
+				
+				cc.fillStyle = "#FFF";
+				cc.fillRect(0, 0, 10000, 15000);							
+			}
+						
+			var noinput = function()
+			{
+				ni = true;
+			}
+
+			var doinput = function()
+			{
+				ni = false;
+			}		
+
+			var imgc = function()
+			{
+				console.log(images);
+				wt = 16*(600/1080);
+				
+				var id = document.getElementById("bg").value;
+				cc.drawImage(images[id], 0, 0, c.width, c.height);
+
+				cc.fillStyle = document.getElementById("color").value;
+								
+				cc.fillRect(0, 0, wt, c.height);
+				cc.fillRect(0, 0, c.width, wt);
+				cc.fillRect(0, c.height - wt, c.width, wt);
+				cc.fillRect(c.width - wt, 0, wt, c.height);
+				
+				var mes = document.getElementById("mes").value;
+				
+				if (mes)
+				{
+					for (var i = 0; i < mes.length; i ++)
+						if (mes[i] == "'" || mes[i] == '"')
+						{
+							mes = sliceHere(mes, i);
+							i --;
+						}
+
+					console.log(mes.length);
+						
+					cc.fillStyle = "#111";
+					cc.font = 8*0.79 + "pt Monospace";
+					cc.drawImage(images[23], cc.width/2 - images[23].width/2*0.79, cc.height/2 - images[23].height/2*0.79, images[23].width*0.79, images[23].height*0.79);
+					txt(cc, mes, cc.width/2 - images[23].width/2*0.79 + 7.9, cc.height/2 - images[23].height/2*0.79 + 50*0.79, 15*0.79, 490*0.79)
+				}
+			}
+
+			sload(function()
+			{
+				imgc();
+			});
+		</script>
+		
+		<script type="text/javascript" src="../input.js"></script>
+	</head>
+	
+	<body onload="init();">
+		<iframe id="bgm" width="0" height="0" frameborder="0"wd ></iframe>
+		
+		<table id = "cont" width="95%" align="center" border="0">
+			<tr>
+				<td align="center" class="h">
+					<strong>Level creator</strong>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					
+					<div align="center" id="cd">
+						<table align="center" border="0">
+							<tr><td><br /></td></tr>
+							
+							<tr><td>
+							
+							<table border="0">							
+								<tr><td><span id="inp">Name:&nbsp;</span></td> <td><input id="name"></input></td></tr>
+								<tr><td><br /></td></tr>
+
+								<tr><td><span id="inp">Wall color:</span>
+								<td><select id="color" onchange="imgc();">
+									<option value="#888">Grey</option>
+									<option value="#2E1D1A">Metal</option>
+									<option value="rgba(33,200,250,0.4)">Walk wall color</option>
+									<option value="rgba(150,150,120,0.7)">Shoot-through wall color</option>
+								</select></td></td></tr>
+
+								<!--<tr><td><span id="inp">Intro:</span>
+								<td><select id="intro">
+									<option value="false">No intro</option>
+									<option value="9">Intro_01</option>
+								</select></td></td></tr>-->
+																
+								<tr><td><span id="inp">Background:</span>
+								<td><select id="bg" onchange="imgc();">
+									<option value="15">Standard</option>
+									<option value="3">Introduction 1</option>
+									<option value="13">Introduction 2</option>
+									<option value="14">Introduction 3</option>
+									<option value="15">Introduction 4 #Standard</option>
+									<option value="15">Introduction 5 #Standard</option>
+									<option value="24">Control bridge</option>
+									<option value="18">Hallway</option>
+								</select></td></td></tr>
+								
+								<tr><td><span id="inp">Message (no apostrophe's allowed): </span></td><td><textarea onkeyup="imgc();" id="mes"></textarea></td></tr>
+								
+								<tr><td>
+									<br />
+									<canvas style="padding-left:10px;" id="c" width="600" height="400"></canvas>
+								</td></tr>
+								
+
+								<tr><td><br /></td></tr>
+								<tr><td><br /></td></tr>
+								<tr><td><span id="inp">Load: </span></td><td><textarea id="pl"></textarea></td></tr>
+								<tr><td><br /></td></tr>
+								<tr><td colspan=2><hr /></td></tr>
+								<tr><td><a href="javascript:void(0)" onclick="start();" id="inpa">Go</a></td></tr>
+							</table>
+							</td></tr>
+						</table>
+					</div>
+				</td>
+			</tr>			
+			<tr>
+			</tr>
+			<tr>
+				<td id="done"></td>
+			</tr>
+			</tr>
+		</table>
+	</body>
+<html>

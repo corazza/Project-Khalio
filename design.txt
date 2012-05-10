@@ -1,0 +1,168 @@
+Project Khalio
+
+THE PLAYERS:
+
+	The Flatland:
+		
+		It is a name for both the universe which has only two dimensions, and a planet whose only inhabitants are the Flatlanders, twodimensional, square-like beings.
+	
+	
+	ArtIC:
+		
+		The Artificial intelligence corporation. Built the Station.
+	
+	
+	The spacestation ("Station"):
+	
+		Created by ArtIC, served as a research platform for many projects, including Khalio.
+		
+		PARTS:
+			
+			1. The training room
+			1. The hallway and the control room
+			2. Power
+			3. Engines
+			4. Survailance
+			5. Weapons system
+			6. Main data center
+			1. Ending
+
+	The simulation:
+		
+		ArtIC was experimenting with evolution algorithms, trying to evolve AI, and built a simulation which was left running after the station was abbandoned.
+	
+	Khalio:
+		
+		A product of the simulation left running on the abandoned ArtIC space station. The original project's name was also "Khalio".
+	
+	Subjects:
+	
+		Frozen on the Station, needed by Khalio to activate parts of the station.
+
+		
+	
+	
+FACTS:
+
+	Sending things in space is much simpler in the Flatland than it is in the real world.
+	
+	
+
+STORY:
+
+	SETTING:
+
+		Khalio was a project held on the ArtIC space station. The goal was to develop artificial intelligence through the use of evolution, but ArtIC, the company which owned the Station, soon abandoned it and shut most of its parts down. The simulation from which the sentient Khalio emerged was still left on, though, and soon Khalio killed everyone else in his simulation world, and became aware of his situation by examining some files on the Station's computer. The problem was that he had no way to interact with things on the Station, because most of them were shut down. He browsed through what little data (flata) he had, and found that on the same station, portal technology was being developed. He realized that there were many still alive (frozen) test subjects, and quickly, he awoke the player with the intention of manipulating him to activate parts of the Station.	
+	
+	PART 1 (5 rooms):
+		
+		Introduction. Khalio lets the player run through the basic portal tech course so he gets familiar with his tool, the portal gun, and with the setting.
+		
+	PART 2 (2 rooms):
+		
+		The first room is just a hallway, the second room is the maintenance room, from which the player will have to repair the Station.
+		
+	PART 3 (15 rooms)
+		
+		From the controll room, the player descends to other parts of the station, activating them.
+	
+	END:
+		
+		Khalio gains almost 100% control of the station, which can now be moved at his will. After that, the player enters the cryogenic chamber. END.
+		
+	AFTER THE GAME:
+	
+		Survey
+	
+	
+		
+		
+		
+_________________________________
+IDEAS:
+	- stop time
+	- slow time
+	- jumper
+	- gravity inverse
+	- jump speed
+	- player speed
+	
+	
+	
+PERKS:
+	- decrease gravity
+	- multi-jump
+	- jump speed
+	
+	
+	
+FEEDBACK:
+
+	Fixed:
+		
+		- Sidescrolling is bad. #widened the margin
+		- Players don't know how to activate things. #implementing a tutorial
+		- In the beginning, put screen with controls.
+		- Can't place portal below.
+		- Movement is too slippery
+		
+	
+	Still standing:
+		- Enter door with a buttonpress
+		- movement is still weird
+		- Fullscreen or a way to prevent the mouse from going outside the game would be nice. I end up accidentally clicking outside of it or on one of the social links by accident sometimes.
+
+	
+	
+	Refused to fix:
+		- portals are too slow
+	
+
+		
+TODO:
+
+ 	- 3 levels for each part (15 in total)
+	- 3 levels of ending
+
+Narration:
+
+2. testingbla
+3. "Good, I have this old messaging system online. Please proceed to the next room, and hurry, there isnt much time."
+4. Glad you made it through. My name is Khalio, and we're both stuck on this abandoned spacestation floating around the Flatland. I am just an AI, and I barely have control over all the parts, mostly because they're shut down. I'll need you to activate them. More on that later, now go!
+5. <FlatML version=4.20> <hint> HINT #1337: You need to wait 5s before the door you entered through is reactivated. </hint> --- I will be dumping some of the files I find useful for you, as I go through the little flata that is available to me. This station was once used as a research facility, apparently. And there is something called a "Main Flata Center", one of those things I said you will need to activate. I suggest you get the reactors rolling first, though. But hurry now, this is the last of the training chambers!
+6. ---
+7. Finally! You are in the control room. From here, you will need to decend to outer layers of the spacestation, and manually turn them on. This whole facility was abandoned by ArtIC years ago, but not all power was cut. I think the solar panels kept me online, I do not know what woke me up, though, First, switch on the power, without it, you wont be able to do anything else.
+
+
+Questions: 
+
+	Please answer any of these, preferably all of them.
+
+	1. What did annoy you the most in the game (gameplay related stuff, you can report bugs later)?
+	
+	2. Friction should be 
+		a) lowered
+		b) kept as it is 
+		c) be raised
+	
+	3. The puzzles were:
+		a) too easy
+		b) OK
+		c) too hard
+		
+	4. I experienced
+		a) no bugs
+		b) some bugs
+		c) a lot of bugs
+		
+	5. If you experienced any bugs, please explain them here
+
+	6. The game needs to be 
+		a) generally faster
+		b) just as it is 
+		c) generally slower
+		
+	7. Feature suggestion plz
+	
+
+Make the player stop flipping sides while holding upon the collision with a sensor.
