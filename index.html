@@ -121,18 +121,9 @@
 				
 				sload(function()
 				{
-					game.LLSA = setInterval(function()
-					{
-						game.LSA -= 1/(1000/game.FFPS);
-					}, game.FFPS); //Lower loading screen alpha
-					
-					setTimeout(function()
-					{
-						clearInterval(game.LLSA);					
-						clearInterval(game.loading);
-					}, 1000);
-					
-					game.run = setInterval(game.update, 1000/game.FFPS);					
+					game.LSA = 0
+					game.run = setInterval(game.update, 1000/game.FFPS);
+					game.draw();
 					
 					game.focus = function(e)
 					{

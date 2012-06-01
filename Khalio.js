@@ -1108,8 +1108,21 @@ var Game = function (canvas, perks)
 			}
 	}
 
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+    
 	self.draw = function()
-	{
+	{   
+	    window.requestAnimFrame(self.draw, canvas);   
+	    
 		self.context.fillStyle = "#000";
 		self.context.fillRect(0, 0, canvas.width, canvas.height);	
 		
@@ -1174,7 +1187,9 @@ var Game = function (canvas, perks)
 
 		for (m = 0; m < self.shots.length; m ++)
 			self.shots[m].manage();
-				
+			
+		
+		if (self.all)		
 		for (i = 0; i < self.all.length; i ++)
 		{
 			if ((self.all[i] == self.player || self.all[i] instanceof self.Objekt || self.all[i] instanceof self.Lever || self.all[i] instanceof self.Sensor || self.all[i] instanceof self.Door) && self.places["power"])
@@ -1713,7 +1728,7 @@ var Game = function (canvas, perks)
 			self.parseInput();
 			self.logic();
 			self.posit();
-			self.draw();
+			//self.draw();
 			
 			if (self.player.phy.hasForce("right"))
 			{
