@@ -182,7 +182,7 @@ for (i = 0; i < sources.length; i ++)
 {
 	if (sources[i][0] != "-")
 	{
-		sources[i] = "res/images/" + sources[i] + "?" + new Date();
+		sources[i] = "res/images/" + sources[i];
 	}
 	else
 	{

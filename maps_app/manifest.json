@@ -1,0 +1,15 @@
+{
+  "name": "Project Khalio",
+  "version": "1",
+  "icons": {"128": "128.png"},
+  "app": {
+    "urls": [
+      "http://khalio.banehq.com/"
+    ],
+    "launch": {
+      "web_url": "http://khalio.banehq.com/"
+    }
+  },
+  "permissions": [],
+  "manifest_version": 1
+}
