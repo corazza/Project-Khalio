@@ -1,7 +1,7 @@
 //CLEAR THE LOADING!
 
 
-var Game = function (canvas, perks) 
+var Game = function (canvas) 
 {
 	
 	//"use strict";
@@ -30,8 +30,6 @@ var Game = function (canvas, perks)
 		self.lastPorted = 100; //You can be ported for the next <lastPorted> seconds after being ported.
 		self.portalSize = 130*0.8*0.7; //The size of portals. This is either width or height, depending on their orientation, so it can be called "length" of portals.
 		self.portalMult = 1; //Your velocities are multiplied by this upon exiting a portal.
-		self.bgm = "http://www.youtube.com/embed/VVGb7JU4TSU"; //The background music.
-		self.endText = "Thanks for playing, but this isn't the end! New rooms will be released, and the story (which might seem nonexistent to you now) will progress.";
 		self.pauseL = 1000;
 		self.bsp = [150, 150];
 		self.bs = [190, 60];
@@ -45,12 +43,11 @@ var Game = function (canvas, perks)
 		self.mesM = 5; //The message margin
 		self.mesH = 25; //The message height
 		self.mesF = 12; //The message font
-		
+        self.endtext = "Khalio.js line 48, settings, to set the endtext.";
 	//</settings>
 
 	self.rel = false;
 	self.CA = 1; //Control alpha
-	self.perks = false; //True while buying perks
 	self.sw = true;
 	self.mouse = [0, 0]; //Always has the mouse's relative position
 	self.paused = false; //True when pasued
@@ -62,7 +59,8 @@ var Game = function (canvas, perks)
 	self.CT = new Date().getTime(); //Used for FPS calculation
 	self.FPS = 60; //Only used for the FPS average
 	self.reset = false;
-	
+
+    //Saving progress, which parts of the station has the user switched on?
 	if (getCookie("prog") && getCookie("prog") != "")
 	{
 		self.places = JSON.parse(getCookie("prog"));
@@ -89,13 +87,14 @@ var Game = function (canvas, perks)
 		"MFC"
 	];
 	
-	self.portals = [];
+    //All of this is only relevant for the current level. When a new level is loaded, these arrays get overwritten.
+	self.portals = []; //This will only ever have 2 elements.
 	self.walls = [];
-	self.objects = [];
-	self.levels = [];
+	self.objects = []; //Mainly just boxes, valid for the current level.
+	self.levels = []; //List of all the levels.
 	self.phyobs = []; //Easy access to anything that is affected by forces and has mass
 	self.doors = [];
-	self.shots = [];
+	self.shots = []; //The shots that were fired by the player on mouse-press.
 	self.lasers = [];
 	self.sensors = [];
 	self.points = [];
@@ -193,27 +192,28 @@ var Game = function (canvas, perks)
 		
 		l.n = n;
 		
-		if (l.n != "end")
-		{
-			l.walls = walls;
-			l.objects = objects;
-			l.doors = doors;
-			l.w = w;
-			l.h = h;
-			l.init = init;
-			l.sp = sp;
-			l.bg = bg;
-			l.gun = gun;
-			l.wc = wc;
-			l.s = sp.s;
-			l.id = [i, j];
-			
-			l.walls.push([[0, 0, l.w, self.wallT], l.wc, function(){}]);
-			l.walls.push([[0, l.h - self.wallT, l.w, self.wallT], l.wc, function(){}]);
-			l.walls.push([[0, 0, self.wallT, l.h], l.wc, function(){}]);
-			l.walls.push([[l.w - self.wallT, 0, self.wallT, l.h], l.wc, function(){}]);
-		}
-	}
+        //The end level has nothing, it is just virtual. Its name is still needed because the game ends when the player gets to a level named "end".
+		if (l.n == "end")
+            return;
+        
+        l.walls = walls;
+        l.objects = objects;
+        l.doors = doors;
+        l.w = w;
+        l.h = h;
+        l.init = init;
+        l.sp = sp;
+        l.bg = bg;
+        l.gun = gun;
+        l.wc = wc;
+        l.s = sp.s;
+        l.id = [i, j];
+        
+        l.walls.push([[0, 0, l.w, self.wallT], l.wc, function(){}]);
+        l.walls.push([[0, l.h - self.wallT, l.w, self.wallT], l.wc, function(){}]);
+        l.walls.push([[0, 0, self.wallT, l.h], l.wc, function(){}]);
+        l.walls.push([[l.w - self.wallT, 0, self.wallT, l.h], l.wc, function(){}]);
+    }
 
 	self.Phy = function(m, o, e)
 	{
@@ -294,7 +294,7 @@ var Game = function (canvas, perks)
 		document.getElementById("res").setAttribute("class", "topMenu");
 		document.getElementById("res").innerHTML = "New game";
 
-		if (!self.player.holding.held && !self.paused && self.player.gun && !self.perks && self.messages.length == 0)
+		if (!self.player.holding.held && !self.paused && self.player.gun && self.messages.length == 0)
 		{
 			var pos = [self.player.getRect()[0] + self.player.getRect()[2]/2, self.player.getRect()[1] + 28];
 
@@ -312,12 +312,12 @@ var Game = function (canvas, perks)
 			else if(e.button == 2)
 				var color = "green";
 			
-			var pos = [self.player.getRect()[0] + self.player.getRect()[2]/2 - 5.5, self.player.getRect()[1] + 28 - 5.5]; //Sad je na pocetku ruke, ali gornjelijevim kuten, centar treba bit
+			var pos = [self.player.getRect()[0] + self.player.getRect()[2]/2 - 5.5, self.player.getRect()[1] + 28 - 5.5];
 			
 			
 			new self.Shot(vx, vy, color, pos);
 		}
-		else if (self.perks && self.messages.length == 0)
+		else if (self.messages.length == 0)
 		{
 			var offset = [0, 0];
 			
@@ -461,9 +461,6 @@ var Game = function (canvas, perks)
 		clearInterval(self.run);
 		self.paused = true; 	
 		$("#cd").animate({opacity:0.4}, self.pauseL);
-		
-		//if (ss)
-			//document.getElementById("bgm").src = "";
 	}
 	
 	self.unpause = function(rs)
@@ -471,11 +468,6 @@ var Game = function (canvas, perks)
 		self.run = setInterval(self.update, 1000/self.FFPS);
 		self.paused = false;
 		self.CT = new Date().getTime(); //Current time
-		
-		//if (rs)
-		//{
-		//	document.getElementById("bgm").src = self.bgm + "?autoplay=1&loop=1";
-		//}
 		
 		$("#cd").animate({opacity:1}, self.pauseL);
 	}		
@@ -493,16 +485,6 @@ var Game = function (canvas, perks)
 				if (((self.doors[i].tag == "zone" || self.doors[i].tag == "forth" || (self.doors[i].tag == "spec" && self.allTrue(self.places))) && p[0] <= c[0]) || (((self.doors[i].tag == "spec" && self.allTrue(self.places)) || self.doors[i].tag == "back") && p[0] > c[0]))
 					self.doors[i].a();
 			}
-	}
-	
-	self.savePerks = function()
-	{
-		var ll = [];
-		
-		for (var i = 0; i < self.buttons.length; i ++)
-			ll.push(self.buttons[i].level);
-					
-		setCookie("perks", ll.join(":"), 365);
 	}
 	
 	self.saveProg = function()
@@ -536,8 +518,10 @@ var Game = function (canvas, perks)
 	self.loadLevel = function(level)
 	{				
 		if (level.sp.shine == "yes")
+        {
 			shine(500, 500, 2000, 5);
-		
+		}
+        
 		self.reset = false;
 		document.getElementById("res").setAttribute("class", "topMenu");
 		document.getElementById("res").innerHTML = "New game";
@@ -1107,17 +1091,6 @@ var Game = function (canvas, perks)
 				self.all[i].pos[1] += self.all[i].phy.vy;
 			}
 	}
-
-    window.requestAnimFrame = (function(){
-      return  window.requestAnimationFrame       || 
-              window.webkitRequestAnimationFrame || 
-              window.mozRequestAnimationFrame    || 
-              window.oRequestAnimationFrame      || 
-              window.msRequestAnimationFrame     || 
-              function( callback ){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
     
 	self.draw = function()
 	{   
@@ -1131,7 +1104,7 @@ var Game = function (canvas, perks)
 		if (self.level.id[0] == 0 && self.level.id[1] == 6)
 		{
 			var yc = 237;
-			var xc = 181; //+ 70 
+			var xc = 181;
 			
 			for (x in self.places)
 			{
@@ -1196,8 +1169,8 @@ var Game = function (canvas, perks)
 			{
 				self.context.fillStyle = "rgba(0, 0, 0, 0.2)";
 				self.context.fillRect();
-				self.context.fillRect(self.all[i].getRect()[0] - self.SM, self.all[i].getRect()[1] + self.SM, self.all[i].getRect()[2], self.all[i].getRect()[3] - self.SM);				
-			}
+				self.context.fillRect(self.all[i].getRect()[0] - self.SM, self.all[i].getRect()[1] + self.SM, self.all[i].getRect()[2], self.all[i].getRect()[3] - self.SM);
+            }
 			
 			if (self.all[i].alive == undefined || self.all[i].alive)
 			{
@@ -1221,6 +1194,11 @@ var Game = function (canvas, perks)
 			self.context.fillStyle = self.lights;
 			self.context.fillRect(0, -20, canvas.width, 120);
 		}
+        else if (!self.changed)
+        {
+            self.changed = true;
+            images[15] = images[25];
+        }
 
 		if (self.dg && self.player.sgs != 1)
 		{
@@ -1228,73 +1206,16 @@ var Game = function (canvas, perks)
 			self.context.fillRect(canvas.width - 80, canvas.height - 80, 40, 40);
 		}
 		
-		if (!self.perks)
-		{
-			self.context.font="24pt Helvetica";
-			
-			self.context.fillStyle = "#111";
-			self.context.fillText(self.player.score + "", self.wallT*2, canvas.height - self.wallT*2);
+        self.context.font="24pt Helvetica";
+        
+        self.context.fillStyle = "#111";
+        self.context.fillText(self.player.score + "", self.wallT*2, canvas.height - self.wallT*2);
 
-			if (self.level.score != 0)
-			{
-				self.context.fillStyle = "#331";
-				self.context.fillText("+" + self.level.score, self.wallT*2 + self.context.measureText(self.player.score + "").width + 7, canvas.height - self.wallT*2);
-			}
-		}
-		else
-		{
-			self.context.fillStyle = "rgba(20,20,20,0.6)";
-			self.context.fillRect(0, 0, canvas.width, canvas.height);	
-
-			self.context.fillStyle = "#EEA";
-			self.context.font = "40pt Helvetica";
-			self.context.fillText("Score: " + self.player.score + "", canvas.width/2 - self.context.measureText("Score: " + self.player.score + "").width/2, 70);		
-		
-			var offset = [0, 0];			
-			self.context.font = "15pt Helvetica";
-
-			for (var i = 0; i < self.buttons.length; i ++)
-			{
-				self.context.fillStyle = "#212121";
-				self.context.fillRect(self.bsp[0] + offset[0], self.bsp[1] + offset[1], self.bs[0], self.bs[1]);
-
-				if (collide([self.mouse[0], self.mouse[1], 1, 1], [self.bsp[0] + offset[0], self.bsp[1] + offset[1], self.bs[0], self.bs[1]]))
-				{
-					self.context.fillStyle = "rgba(255,255,0,0.05)";
-					self.context.fillRect(self.bsp[0] + offset[0], self.bsp[1] + offset[1], self.bs[0], self.bs[1]);
-				}
-
-				self.context.fillStyle = "#CCC";
-
-				self.context.font = 12 + "pt Helvetica";
-				
-				if (self.buttons[i].level != "one")
-					self.context.fillText(self.buttons[i].text + " L" + self.buttons[i].level, self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 20);
-				else
-					self.context.fillText(self.buttons[i].text, self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 20);
-				
-				self.context.font = 8 + "pt Helvetica";
-				
-				if (!self.buttons[i].max && self.buttons[i].level != "one")
-				{
-					if (self.buttons[i].levels[self.buttons[i].level] != 1)
-						self.context.fillText("Costs: " + self.buttons[i].levels[self.buttons[i].level] + " points.", 4 + self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 52);
-					else
-						self.context.fillText("Costs: " + self.buttons[i].levels[self.buttons[i].level] + " point.", 4 + self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 52);
-				}
-				else if (self.buttons[i].level != "one")
-					self.context.fillText("Max.", 4 + self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 52);
-				else
-				{
-					if (self.buttons[i].levels[0] != 1)
-						self.context.fillText("Costs: " + self.buttons[i].levels[0] + " points.", 4 + self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 52);
-					else
-						self.context.fillText("Costs: " + self.buttons[i].levels[0] + " point.", 4 + self.bsp[0] + offset[0] + 4, self.bsp[1] + offset[1] + 52);					
-				}
-					
-				offset[1] += 68;
-			}
-		}	
+        if (self.level.score != 0)
+        {
+            self.context.fillStyle = "#331";
+            self.context.fillText("+" + self.level.score, self.wallT*2 + self.context.measureText(self.player.score + "").width + 7, canvas.height - self.wallT*2);
+        }
 
 		for (var i = 0; i < self.messages.length; i ++) //Draw all the messages.
 			if (self.messages[i].s != "shown")
@@ -1307,7 +1228,6 @@ var Game = function (canvas, perks)
 					self.context.fillStyle = "#111";
 					self.context.font = "8pt Monospace";
 					
-					//txt(self.context, self.messages[i].t, canvas.width/2 - images[self.messages[i].img].width/2 + 100, canvas.height/2 - images[self.messages[i].img].height/2, 15, 400);
 					txt(self.context, self.messages[i].t, canvas.width/2 - images[self.messages[i].img].width/2 + 10, canvas.height/2 - images[self.messages[i].img].height/2 + 50, 15, 490);
 				}
 				
@@ -1483,10 +1403,6 @@ var Game = function (canvas, perks)
 			{
 				self.player.phy.addForce(self.PForce, 0, "right");
 			}
-			else
-			{
-				//self.player.phy.vx = self.PSpeed;
-			}
 			
 			if (self.player.holding.held)
 			{
@@ -1500,13 +1416,13 @@ var Game = function (canvas, perks)
 		{
 			self.player.pr = false;
 			
-			if (self.player.phy.hasForce("right")) //&& !self.player.pr)
+			if (self.player.phy.hasForce("right"))
 				self.player.phy.removeForce("right");
 		}
 		
 		if (input.left)
 		{
-			if (self.player.bHolding && self.player.side == "right"/* && self.player.holdingPos == "normal"*/)
+			if (self.player.bHolding && self.player.side == "right")
 			{
 				var clear = true;
 				
@@ -1518,13 +1434,7 @@ var Game = function (canvas, perks)
 
 			
 			if (self.player.phy.vx > -self.PSpeed && !self.player.phy.hasForce("left"))
-			{
 				self.player.phy.addForce(-self.PForce, 0, "left");
-			}
-			else
-			{
-				//self.player.phy.vx = -self.PSpeed;
-			}
 
 			if (self.player.holding.held)
 			{
@@ -1688,11 +1598,13 @@ var Game = function (canvas, perks)
 					ob.phy.addForce(0, ob.phy.m*self.grav, "grav");
 			}
 			
-			if (!ob.flags.col) //This is uncompatible with the perks.
+			if (!ob.flags.col)
 				ob.jumped = true;
 		}
 	}
 	
+    
+    //<MAIN LOOP>
 	self.update = function()
 	{		
 		if (loaded && !self.paused)
@@ -1708,19 +1620,19 @@ var Game = function (canvas, perks)
 					self.wallsO.push(self.walls[i]);
 				else
 					self.wallsU.push(self.walls[i]);
-				
 			
+			//The list of all objects that need updating is constructed dynamically (this is a bad thing, I suggest changing it).
 			self.all = self.doors;
-			self.all = self.all.concat(self.sensors); //
-			self.all = self.all.concat(self.points); //
-			self.all = self.all.concat(self.lasers); //
+			self.all = self.all.concat(self.sensors);
+			self.all = self.all.concat(self.points);
+			self.all = self.all.concat(self.lasers);
 			self.all = self.all.concat(self.shots);
 			self.all = self.all.concat(self.portals);
-			self.all = self.all.concat(self.levers); //
-			self.all = self.all.concat(self.wallsU); //
-			self.all.push(self.player); //
-			self.all = self.all.concat(self.objects); //
-			self.all = self.all.concat(self.wallsO); //
+			self.all = self.all.concat(self.levers);
+			self.all = self.all.concat(self.wallsU);
+			self.all.push(self.player);
+			self.all = self.all.concat(self.objects);
+			self.all = self.all.concat(self.wallsO);
 
 			self.resetFlags();
 			
@@ -1728,7 +1640,7 @@ var Game = function (canvas, perks)
 			self.parseInput();
 			self.logic();
 			self.posit();
-			//self.draw();
+			//self.draw(); | No need for this, draw() sets its animation frame.
 			
 			if (self.player.phy.hasForce("right"))
 			{
@@ -1809,8 +1721,6 @@ var Game = function (canvas, perks)
 
 					self.unpause(false); 
 					self.loadLevel(self.levels[d.level[0]][d.level[1]]);
-					
-					send("prog", {"n": d.level + "", "time": (new Date().getTime() - game.start)/1000})
 				}, self.pauseL);				
 			}
 			else if (d.tag != "zone" && self.levels[d.level[0]][d.level[1]].n == "end")
@@ -1829,14 +1739,12 @@ var Game = function (canvas, perks)
 				setCookie("gpoints", self.player.gp.join(":"), 365);
 
 				clearInterval(self.run);
-				
-				//document.getElementById("bgm").src = "http://www.youtube.com/embed/8HTaZw0MqBc?autoplay=1";
-				
+
 				self.draw();
 				
 				$("#cd").fadeOut(2000, function()
 				{
-					$("#cd").replaceWith("<div align='center'><p class='score'>Your score: " + self.player.score +"</p><p class='end'>Thanks for playing! Like and share, if you will.</p><br /><p class='end'>Please, tell me what did you like the least about the game (also any general feedback would be cool):</p><textarea id ='feed' rows='10' cols='50'></textarea><br /><br /><table border='0'><tr><td><a class='topMenu' href='javascript:void(0);' onclick='sendFeed();'>Send feedback</a></td></tr><tr><tr/><tr><td><a id='p' class='topMenu' href='LC/LCindex.html' target='_blank' >Try out the level creator</a></td></tr><tr><tr/><tr><td><a id='p' class='topMenu' href='javascript:void(0);' onclick='clearC();'>Reset game</a></td></tr></div>");
+					$("#cd").replaceWith("<div align='center'><p class='score'>Your score: " + self.player.score +"</p><p class='end'>" + endtext + "</p>");
 				});
 
 				shine(100, 50, 10000, 10);
@@ -2410,7 +2318,6 @@ var Game = function (canvas, perks)
 		
 		p.die = function()
 		{
-			send("prog", {"n":"died", "time": (new Date().getTime() - game.start)/1000});
 			clearInterval(self.level.preping);
 			self.level.score = 0;
 			self.level.gp = [];
@@ -2466,7 +2373,7 @@ var Game = function (canvas, perks)
 		p.drawArm = function()
 		{
 			p.handend = p.getHandend(self.armLength);
-			self.context.strokeStyle = "#B3AA98";
+			self.context.strokeStyle = "#ffe6d9";
 
 			self.context.lineCap = "round";
 			
@@ -2527,9 +2434,7 @@ var Game = function (canvas, perks)
 	document.addEventListener("contextmenu", self.oncontextmenu);
 	document.addEventListener("keydown", press, false);
 	document.addEventListener("keyup", release, false);
-	
-	//document.getElementById("bgm").src = self.bgm + "?autoplay=1&loop=1";		
-		
+
 	if (getCookie("gpoints"))
 		self.player.gp = getCookie("gpoints").split(":"); 
 	else
@@ -2548,39 +2453,8 @@ var Game = function (canvas, perks)
 	for (i = 0; i < self.buttons.length; i++)
 		for (j = 0; j < self.buttons[i].level; j ++)
 			self.buttons[i].oC();
-
-	self.buttons = 
-	[
-		new self.Button(function()
-		{
-			self.player.sgs -= 0.2;
-			self.player.gs += 1500;
-		}, "Decrease gravity.", [1, 2, 3, 4, 5], perks[0]),
-		
-		new self.Button(function()
-		{
-			self.player.jn ++;
-		}, "Multi jump.", [1, 2], perks[1]),
-		
-		new self.Button(function()
-		{
-			self.JPSpeed += 1.5;
-		}, "Jump speed.", [1, 2, 3, 4, 5], perks[2]),
-
-		new self.Button(function()
-		{
-			self.objects.push(new self.Objekt(0, [self.player.pos[0] + self.player.getRect()[2]/2 - images[0].width/2, self.player.pos[1] + self.player.getRect()[3]/2 - images[0].height/2], undefined, 50));
-		}, "Spawn a box.", [10], "one"),
-
-		new self.Button(function()
-		{
-			self.player.phy.fr *= 0.9;
-		}, "Lower player's friction.", [1, 2, 3, 4, 5], perks[4])
-	];
 	
 	self.Objekt.prototype.flags = {};
 	self.player.flags = {};	
 	//</prep>	
 }
-
-//MFC switch level idea: some gravity swing, but with the pink walls (no gravity)!

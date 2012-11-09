@@ -63,7 +63,6 @@ function getCookie(c_name)
 
 clearC = function()
 {
-	console.log("Reset.");
 	setCookie("score", "0", 365);
 	setCookie("gpoints", "", 365);
 	setCookie("perks", "", 365);
@@ -144,6 +143,7 @@ Or = function(rect1, rect2)
 var loaded = false;
 var i;
 
+//Put the images you need here in the sources, AT THE END. Then, use the images array to access those images. All your sprites should be in "res/images/". Paths that begin with an "-" are ignored.
 
 var sources =
 [
@@ -172,8 +172,7 @@ var sources =
 	"-test.png", //22
 	"temps/aims.png", //23
 	"background8.png", //24
-	"-background9.png", //25
-	"-e.png", //26
+	"backgroundL.jpg", //25
 ];
 
 var positions = [];
@@ -213,7 +212,6 @@ var load = function(i)
 		images[i] = new Image();
 		images[i].onload = function()
 		{
-			console.log(i);
 			nl ++;
 			load(i + 1);			
 		};
@@ -221,7 +219,6 @@ var load = function(i)
 	}
 	else if (sources[i] != undefined && sources[i][0] == "-")
 	{
-		console.log("Discarded " + sources[i]);
 		images[i] = "-";
 		nl ++;
 		load(i + 1);			
@@ -263,12 +260,6 @@ getLasers = function(start, end)
 	return ret;
 }
 
-/*playSound = function(id)
-{
-	var toPlay = document.getElementById(id);
-	toPlay.play();
-}*/
-
 var soundSources =
 [
 	"ported2.wav", //0
@@ -306,7 +297,6 @@ for (i = 0; i < soundSources.length; i ++)
 		else
 		{
 			sounds[j].push("-");
-			console.log("Discarded " + soundSources[i]);
 		}
 		
 var playing = []; //This will be our play index, so we know which version has been played the last.
@@ -342,3 +332,15 @@ playIntro = function(id)
 		played.push(id);
 	}
 }
+
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       || 
+          window.webkitRequestAnimationFrame || 
+          window.mozRequestAnimationFrame    || 
+          window.oRequestAnimationFrame      || 
+          window.msRequestAnimationFrame     || 
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
