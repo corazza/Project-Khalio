@@ -675,31 +675,7 @@ var Game = function (canvas)
 			for (i = 0; i < self.doors.length; i ++)
 				if (self.doors[i].tag == "back")
 					self.placePlayer(i);//self.player.pos = [self.doors[i].pos[0] + self.doors[i].getRect()[2]/2, self.doors[i].pos[1]];
-		
-
-		/*self.level.preping = setTimeout(function()
-		{			
-			if (self.prev[0] == self.level.id[0])
-			{
-				for (i = 0; i < self.doors.length; i ++)
-					if ((self.doors[i].tag == "back" && self.prev[1] <= self.level.id[1]) || ((self.doors[i].tag == "forth" || self.doors[i].tag == "spec" || self.doors[i].tag == "zone") && self.prev[1] > self.level.id[1]))
-						self.doors[i].a();
-			}
-			else
-			{
-				for (i = 0; i < self.doors.length; i ++)
-					if ((self.doors[i].tag == "back" && self.prev[0] <= self.level.id[0]) || (self.doors[i].tag == "zone" && self.prev[0] > self.level.id[0]))
-						self.doors[i].a();				
-			}
-
-			if (self.sensors.length != 0)
-				for (i = 0; i < self.doors.length; i ++)
-					if (self.doors[i].tag == "forth")
-						self.doors[i].d();
-		}, 5000);*/
-
-		//self.level.init(self.prev, self.level.id, self.level.sp.s);
-		
+				
 		self.level.score = 0;
 		self.level.gp = [];
 		
@@ -2458,3 +2434,4 @@ var Game = function (canvas)
 	self.player.flags = {};	
 	//</prep>	
 }
+

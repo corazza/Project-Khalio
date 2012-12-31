@@ -289,99 +289,7 @@ var k = function (canvas, w, h, n, c, bg, mes)
 				}
 
 				var did = false;
-				var did2 = false;
-			
-				/*for (var i = 0; i < self.walls.length; i ++)
-				{
-					if (collide([self.nsp[0] - self.cM, self.nsp[1] - self.cM, self.nsp[0] + self.nep[0] + self.cM*2, self.nsp[1] + self.nep[1] + self.cM*2], self.walls[i].rect))
-					{
-						if (self.nep[0] > self.walls[i].rect[0] - self.cM && self.nep[0] < self.walls[i].rect[0] + self.cM)
-							self.nep[0] = self.walls[i].rect[0];
-
-						if (Math.abs(self.nep[1] - self.walls[i].rect[1]) < self.cM)
-						{						
-							self.nep[1] = self.walls[i].rect[1];
-							
-							if (Math.abs(self.nep[0] - (self.walls[i].rect[0] + self.walls[i].rect[2])) < self.cM)
-							{
-								did = true;
-								self.nep[0] = self.walls[i].rect[0] + self.walls[i].rect[2];
-							}
-							
-							if (Math.abs(self.nsp[0] - self.walls[i].rect[0]) < self.cM)
-							{
-								did2 = true;
-								
-								if (did)
-								{
-									var old = self.walls[i].rect[1];
-									self.walls[i].rect[1] = self.nsp[1];
-									self.walls[i].rect[3] += old - self.walls[i].rect[1];
-								}							
-							}
-						}
-						else if (Math.abs(self.nsp[1] - (self.walls[i].rect[1] + self.walls[i].rect[3])) < self.cM)
-						{
-							self.nsp[1] = self.walls[i].rect[1] + self.walls[i].rect[3];
-							if (Math.abs(self.nep[0] - (self.walls[i].rect[0] + self.walls[i].rect[2])) < self.cM)
-							{
-								did = true;
-								self.nep[0] = self.walls[i].rect[0] + self.walls[i].rect[2];
-							}
-
-							if (Math.abs(self.nsp[0] - self.walls[i].rect[0]) < self.cM)
-							{
-								did2 = true;
-								
-								if (did)
-									self.walls[i].rect[3] += self.nep[1] - (self.walls[i].rect[1] + self.walls[i].rect[3]);
-							}
-						}
-						
-						if (Math.abs(self.nep[0] - self.walls[i].rect[0]) < self.cM)
-						{
-							self.nep[0] = self.walls[i].rect[0];
-							
-							if (Math.abs(self.nsp[1] - self.walls[i].rect[1]) < self.cM)
-							{
-								did = true;
-								self.nsp[1] = self.walls[i].rect[1];
-							}
-							
-							if (Math.abs(self.nep[1] - (self.walls[i].rect[1] + self.walls[i].rect[3])) < self.cM)
-							{
-								did2 = true;							
-								self.nep[1] = self.walls[i].rect[1] + self.walls[i].rect[3];
-								
-								if (did)
-								{
-									self.walls[i].rect[2] = self.walls[i].rect[0] + self.walls[i].rect[2] - self.nsp[0];
-									self.walls[i].rect[0] = self.nsp[0];
-								}
-							}
-						}
-						else if (Math.abs(self.nsp[0] - self.walls[i].rect[0] - self.walls[i].rect[2]) < self.cM)
-						{
-							self.nsp[0] = self.walls[i].rect[0] + self.walls[i].rect[2];
-							
-							if (Math.abs(self.nsp[1] - self.walls[i].rect[1]) < self.cM)
-							{
-								did = true;
-								self.nsp[1] = self.walls[i].rect[1];
-							}					
-
-							if (Math.abs(self.nep[1] - (self.walls[i].rect[1] + self.walls[i].rect[3])) < self.cM)
-							{
-								did2 = true;							
-								self.nep[1] = self.walls[i].rect[1] + self.walls[i].rect[3];
-								
-								if (did)
-									self.walls[i].rect[2] = self.nep[0] - self.walls[i].rect[0];
-							}
-						}		
-					}		
-				}*/
-				
+				var did2 = false;				
 				if (!(did && did2))
 					new self.Wall([self.nsp[0], self.nsp[1], self.nep[0] - self.nsp[0], self.nep[1] - self.nsp[1]], self.pimages[self.placeit]);
 			}
@@ -605,14 +513,6 @@ var k = function (canvas, w, h, n, c, bg, mes)
 	self.finish = function()
 	{
 		var i;
-		
-		/*
-		for (i = 0; i < self.walls.length; i++)
-			self.walls[i].rect = [self.walls[i].rect[0]*self.ratio, self.walls[i].rect[1]*self.ratio, self.walls[i].rect[2]*self.ratio, self.walls[i].rect[3]*self.ratio];
-
-		for (i = 0; i < self.objects.length; i++)
-			self.objects[i].pos = [self.ratio*(self.objects[i].pos[0] + (images[self.objects[i].img].width - images[self.objects[i].img].width*self.ratio)/2), self.ratio*(self.objects[i].pos[1] + (images[self.objects[i].img].height - images[self.objects[i].img].height*self.ratio))];
-		*/
 		
 		var nwalls = self.walls.slice();
 		

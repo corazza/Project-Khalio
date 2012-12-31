@@ -166,3 +166,4 @@ Questions:
 	
 
 Make the player stop flipping sides while holding upon the collision with a sensor.
+
