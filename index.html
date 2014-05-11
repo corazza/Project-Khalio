@@ -1,59 +1,58 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Project Khalio</title>
+        <head>
+                <title>Project Khalio</title>
 
+                <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+                <meta content="utf-8" http-equiv="encoding">
+                <link rel="stylesheet" type="text/css" href="style.css" />
+                <link rel="icon" type="image/png" href="favicon.ico" />
 
-		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-		<meta content="utf-8" http-equiv="encoding">
-		<link rel="stylesheet" type="text/css" href="style.css" />
-		<link rel="icon" type="image/png" href="favicon.ico" />
+                <script src="jquery.js"></script>
+                <script src="color-min.js"></script>
+                <script src="engine.js"></script>
+                <script src="levels.js"></script>
+                <script src="Khalio.js"></script>
+                <script src="input.js"></script>
+                <script src="defs.js"></script>
+        </head>
 
-		<script src="jquery.js"></script>
-		<script src="color-min.js"></script>
-		<script src="engine.js"></script>
-		<script src="levels.js"></script>
-		<script src="Khalio.js"></script>
-		<script src="input.js"></script>
-        <script src="defs.js"></script>
-	</head>
-	
-	<body onload="init();">
-		<table id="cont" align="center" border="0" width="750" height="500">
-			<tr>
-                <td class="h" align="center">
-                    <strong>Project Khalio</strong>
-                </td>
-			</tr>
+        <body onload="init();">
+                <table id="cont" align="center" border="0" width="750" height="500">
+                        <tr>
+                                <td class="h" align="center">
+                                        <strong>Project Khalio</strong>
+                                </td>
+                        </tr>
 
-			<tr>
-				<td>
-					<div align="center" id="cd"><canvas id="c" width="756" height="504"></canvas></div>
-				</td>
-			</tr>
-			
-			<tr id="o">
-				<td>
-					<table align="left" border="0">
-						<tr>
-							<td>
-								<a id="p" class="topMenu" href="javascript:void(0);" onclick="pause();">Pause</a>
-							</td>
+                        <tr>
+                                <td>
+                                        <div align="center" id="cd"><canvas id="c" width="756" height="504"></canvas></div>
+                                </td>
+                        </tr>
 
-							<td>
-								<a href="javascript:void(0);" class="topMenu" id="rel" onclick="reload();">Restart level</a>
-							</td>
-							<td>
-								<a href="javascript:void(0);" class="topMenu" id="res" onclick="reset();">New game</a>
-							</td>
-							
-							<td>  </td>
-							
-							<td class="info"><div><b>Current level:</b> <span id="ln"></span><div></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</body>
+                        <tr id="o">
+                                <td>
+                                        <table align="left" border="0">
+                                        <tr>
+                                                <td>
+                                                        <a id="p" class="topMenu" href="javascript:void(0);" onclick="pause();">Pause</a>
+                                                </td>
+
+                                                <td>
+                                                        <a href="javascript:void(0);" class="topMenu" id="rel" onclick="reload();">Restart level</a>
+                                                </td>
+
+                                                <td>
+                                                <a href="javascript:void(0);" class="topMenu" id="res" onclick="reset();">New game</a>
+                                                </td>
+
+                                                <td class="info"><div><b>Current level:</b> <span id="ln"></span><div></td>
+                                        </tr>
+                                        </table>
+
+                                </td>
+                        </tr>
+                </table>
+        </body>
 <html>

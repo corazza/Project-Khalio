@@ -4,11 +4,6 @@ body
 	margin:5px;
 }
 
-.social
-{
-	border: 2px solid #111;
-}
-
 a.topMenu
 {
 	color:#FFF;
@@ -24,7 +19,7 @@ a.topMenu
 	color:#EEE;
 	text-decoration: none;
 	font-size: 20px;
-	font-family:Arial,Helvetica,sans-serif;	
+	font-family:Arial,Helvetica,sans-serif;
 }
 
 .info:hover
@@ -37,7 +32,7 @@ a.topMenu
 	color:#EEE;
 	text-decoration: none;
 	font-size: 50px;
-	font-family:Arial,Helvetica,sans-serif;	
+	font-family:Arial,Helvetica,sans-serif;
 }
 
 .score:hover
@@ -174,7 +169,7 @@ a.topMenu
 	color:#EEE;
 	text-decoration: none;
 	font-size: 20px;
-	font-family:Arial,Helvetica,sans-serif;	
+	font-family:Arial,Helvetica,sans-serif;
 }
 
 .info:hover
@@ -187,7 +182,7 @@ a.topMenu
 	color:#EEE;
 	text-decoration: none;
 	font-size: 50px;
-	font-family:Arial,Helvetica,sans-serif;	
+	font-family:Arial,Helvetica,sans-serif;
 }
 
 .score:hover
