@@ -1144,7 +1144,7 @@ var Game = function (canvas)
 			if ((self.all[i] == self.player || self.all[i] instanceof self.Objekt || self.all[i] instanceof self.Lever || self.all[i] instanceof self.Sensor || self.all[i] instanceof self.Door) && self.places["power"])
 			{
 				self.context.fillStyle = "rgba(0, 0, 0, 0.2)";
-				self.context.fillRect();
+				//self.context.fillRect();
 				self.context.fillRect(self.all[i].getRect()[0] - self.SM, self.all[i].getRect()[1] + self.SM, self.all[i].getRect()[2], self.all[i].getRect()[3] - self.SM);
             }
 			
